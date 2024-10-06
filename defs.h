@@ -5,11 +5,15 @@ typedef unsigned long long U64;
 
 #define NAME "REGIUM_ENGINE"
 #define BRD_SQ_NUM 120
-
+ 
 enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK};
-enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILA_NONE};
+
+enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE};
+
 enum {RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE};
+
 enum {WHITE, BLACK, BOTH};
+
 enum {
 	A1 = 21, B1, C1, D1, E1, F1, G1, H1,
 	A2 = 31, B2, C2, D2, E2, F2, G2, H2,
@@ -20,7 +24,32 @@ enum {
 	A7 = 81, B7, C7, D7, E7, F7, G7, H7,
 	A8 = 91, B8, C8, D8, E8, F8, G8, H8, NO_SQ
 };
+
 enum {FALSE, TRUE};
+
+// board structure
+typedef struct {
+
+	int piecies[BRD_SQ_NUM]; //stores information about the board state
+	U64 pawns[3]; //stores information about pawns (01000000, theres a pawn on B file, each byte is 1 file), we use array to differantiate the color (using enum)
+
+	int KingSq[2]; //stores kings position
+
+	int side;
+	int enPas; //checks the squares where enPassant is viable
+	int fiftyMove; //checks for 50 move rule
+
+	int ply; //stores how many half moves were into the search
+	int hisPly; //half moves for determining the repetitions
+
+	U64 posKey; //unique key generated for each position
+
+	int pceNum[13]; //stores the number of pieces
+	int bigPce[3]; //stores number of big pieces for each color (anything that isnt a pawn)
+	int majPce[3]; //stores number of major pieces (rocks and queens)
+	int minPce[3]; //stores number of minor pieces (knights and bishops)
+
+} S_BOARD;
 
 
 #endif 
