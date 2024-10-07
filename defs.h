@@ -1,18 +1,21 @@
-#ifdef DEFS_H
+#pragma once
+
+#ifndef DEFS_H
 #define DEFS_H
 
 typedef unsigned long long U64;
 
 #define NAME "REGIUM_ENGINE"
 #define BRD_SQ_NUM 120
- 
-enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK};
+#define MAXGAMEMOVES 2048
 
-enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE};
+enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };
 
-enum {RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE};
+enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE };
 
-enum {WHITE, BLACK, BOTH};
+enum { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE };
+
+enum { WHITE, BLACK, BOTH };
 
 enum {
 	A1 = 21, B1, C1, D1, E1, F1, G1, H1,
@@ -25,7 +28,10 @@ enum {
 	A8 = 91, B8, C8, D8, E8, F8, G8, H8, NO_SQ
 };
 
-enum {FALSE, TRUE};
+enum { FALSE, TRUE };
+
+// WKCA - white king side castling, WQCA - white queen side castling, B - black
+enum { WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8 }; // 4 bits will tell us which castling is permited (1001, WKCA and BQCA are not permited)
 
 // board structure
 typedef struct {
@@ -35,24 +41,39 @@ typedef struct {
 
 	int KingSq[2]; //stores kings position
 
-	int side;
+	int side; //which color has a move
 	int enPas; //checks the squares where enPassant is viable
 	int fiftyMove; //checks for 50 move rule
+	int castlePerm;
 
-	int ply; //stores how many half moves were into the search
+	int ply; //stores how many half moves we're into the search
 	int hisPly; //half moves for determining the repetitions
 
 	U64 posKey; //unique key generated for each position
 
 	int pceNum[13]; //stores the number of pieces
-	int bigPce[3]; //stores number of big pieces for each color (anything that isnt a pawn)
+	int bigPce[3]; //stores number of big pieces for each color (anything that isn't a pawn)
 	int majPce[3]; //stores number of major pieces (rocks and queens)
 	int minPce[3]; //stores number of minor pieces (knights and bishops)
 
+	S_UNDO history[MAXGAMEMOVES]; //stores all needed information to undo moves, index is defined by histPly
+
 } S_BOARD;
 
+typedef struct {
+	int move;
+	int castlePrem;
+	int enPAS;
+	int fiftyMobe;
+	U64 posKey;
+} S_UNDO;
 
-#endif 
+// MACROS
 
+// GLOBALS
+extern int Sq120ToSq64[BRD_SQ_NUM];
+extern int Sq64ToSq120[64];
 
-#pragma once
+// FUNCTIONS
+
+#endif // DEFS_H

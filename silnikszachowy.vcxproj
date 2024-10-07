@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="init.cpp" />
     <ClCompile Include="regium_engine.cpp" />
   </ItemGroup>
   <ItemGroup>
