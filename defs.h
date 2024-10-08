@@ -63,17 +63,22 @@ typedef struct {
 typedef struct {
 	int move;
 	int castlePrem;
-	int enPAS;
+	int enPas;
 	int fiftyMobe;
 	U64 posKey;
 } S_UNDO;
 
 // MACROS
 
+// This macro changes the file and rank of a square into a index on a bitboard
+#define FileRankToSQ(f,r) (21 + (f)) + ((r) * 10)
+
 // GLOBALS
 extern int Sq120ToSq64[BRD_SQ_NUM];
 extern int Sq64ToSq120[64];
 
 // FUNCTIONS
+
+extern void AllInit();
 
 #endif // DEFS_H
