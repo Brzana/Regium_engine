@@ -60,6 +60,7 @@ typedef struct {
 
 } S_BOARD;
 
+// struct for undo
 typedef struct {
 	int move;
 	int castlePrem;
@@ -68,10 +69,26 @@ typedef struct {
 	U64 posKey;
 } S_UNDO;
 
+// moves generation struct
+typedef struct {
+	unsigned int from;
+	unsigned int to;
+	unsigned int captured;
+	unsigned int flag;
+
+} S_MOVE;
+
 // MACROS
 
 // This macro changes the file and rank of a square into a index on a bitboard
 #define FileRankToSQ(f,r) (21 + (f)) + ((r) * 10)
+
+// offset of the knight while moving
+const int knightOffSets[8] = { -21, -19, -12, -8, 8, 12, 19, 21 };
+const int bishopOffSets[4] = { -11, -9, 9, 11};
+const int rookOffSats[4] = { -10, -1, 1, 10 };
+const int queenOffSets[8] = { -11, -10, -9, -1, 1, 9, 10, 11 };
+const int kingOffSets[8] = { -11, -10, -9, -1, 1, 9, 10, 11 };
 
 // GLOBALS
 extern int Sq120ToSq64[BRD_SQ_NUM];

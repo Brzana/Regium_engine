@@ -33,6 +33,71 @@ void InitSq120To64() {
 	}
 }
 
+void GenerateKnightMoves(S_BOARD *pos, S_BOARD *posKey) {
+	for (int sq = 21; sq <= 98; ++sq) {
+		if(pos -> piecies[sq] == wK) {
+			for (int i = 0; i < 8; i++) {
+				int targetSq = sq + knightOffSets[i];
+				if (pos->piecies[targetSq] == EMPTY) {
+					// add move
+				}
+			}
+		}
+	}
+}
+
+void GenerateBishopMoves(S_BOARD* pos, S_BOARD* posKey) {
+	for (int sq = 21; sq <= 98; ++sq) {
+		if (pos->piecies[sq] == wB) {
+			for (int i = 0; i < 4; i++) {
+				int targetSq = sq + bishopOffSets[i];
+				if (pos->piecies[targetSq] == EMPTY) {
+					// add move
+				}
+			}
+		}
+	}
+}
+
+void GenerateRookMoves(S_BOARD* pos, S_BOARD* posKey) {
+	for (int sq = 21; sq <= 98; ++sq) {
+		if (pos->piecies[sq] == wR) {
+			for (int i = 0; i < 4; i++) {
+				int targetSq = sq + rookOffSets[i];
+				if (pos->piecies[targetSq] == EMPTY) {
+					// add move
+				}
+			}
+		}
+	}
+}
+
+void GenerateQuennMoves(S_BOARD* pos, S_BOARD* posKey) {
+	for (int sq = 21; sq <= 98; ++sq) {
+		if (pos->piecies[sq] == wQ) {
+			for (int i = 0; i < 8; i++) {
+				int targetSq = sq + queenOffSets[i];
+				if (pos->piecies[targetSq] == EMPTY) {
+					// add move
+				}
+			}
+		}
+	}
+}
+
+void GenerateKingMoves(S_BOARD* pos, S_BOARD* posKey) {
+	for (int sq = 21; sq <= 98; ++sq) {
+		if (pos->piecies[sq] == wK) {
+			for (int i = 0; i < 8; i++) {
+				int targetSq = sq + kingOffSets[i];
+				if (pos->piecies[targetSq] == EMPTY) {
+					// add move
+				}
+			}
+		}
+	}
+}
+
 void AllInit() {
 	InitSq120To64();
 }
