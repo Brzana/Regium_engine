@@ -31,43 +31,46 @@ enum {
 enum { FALSE, TRUE };
 
 // WKCA - white king side castling, WQCA - white queen side castling, B - black
-enum { WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8 }; // 4 bits will tell us which castling is permited (1001, WKCA and BQCA are not permited)
+enum { WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8 };
+
+// struct for undo (move this before S_BOARD)
+typedef struct {
+	int move;
+	int castlePerm;
+	int enPas;
+	int fiftyMove;
+	U64 posKey;
+} S_UNDO;
 
 // board structure
 typedef struct {
 
-	int piecies[BRD_SQ_NUM]; //stores information about the board state
-	U64 pawns[3]; //stores information about pawns (01000000, theres a pawn on B file, each byte is 1 file), we use array to differantiate the color (using enum)
+	int piecies[BRD_SQ_NUM];
+	U64 pawns[3];
 
-	int KingSq[2]; //stores kings position
+	int KingSq[2];
 
-	int side; //which color has a move
-	int enPas; //checks the squares where enPassant is viable
-	int fiftyMove; //checks for 50 move rule
+	int side;
+	int enPas;
+	int fiftyMove;
 	int castlePerm;
 
-	int ply; //stores how many half moves we're into the search
-	int hisPly; //half moves for determining the repetitions
+	int ply;
+	int hisPly;
 
-	U64 posKey; //unique key generated for each position
+	U64 posKey;
 
-	int pceNum[13]; //stores the number of pieces
-	int bigPce[3]; //stores number of big pieces for each color (anything that isn't a pawn)
-	int majPce[3]; //stores number of major pieces (rocks and queens)
-	int minPce[3]; //stores number of minor pieces (knights and bishops)
+	int pceNum[13];
+	int bigPce[3];
+	int majPce[3];
+	int minPce[3];
 
-	S_UNDO history[MAXGAMEMOVES]; //stores all needed information to undo moves, index is defined by histPly
+	S_UNDO history[MAXGAMEMOVES]; // move history
+
+	// piece list
+	int pList[13][10];
 
 } S_BOARD;
-
-// struct for undo
-typedef struct {
-	int move;
-	int castlePrem;
-	int enPas;
-	int fiftyMobe;
-	U64 posKey;
-} S_UNDO;
 
 // moves generation struct
 typedef struct {
@@ -79,14 +82,14 @@ typedef struct {
 } S_MOVE;
 
 // MACROS
-
-// This macro changes the file and rank of a square into a index on a bitboard
+#define SQ64(sq120) Sq120ToSq64[sq120]
+#define SQ120(sq64) Sq64ToSq120[64]
 #define FileRankToSQ(f,r) (21 + (f)) + ((r) * 10)
 
-// offset of the knight while moving
+// offset 
 const int knightOffSets[8] = { -21, -19, -12, -8, 8, 12, 19, 21 };
-const int bishopOffSets[4] = { -11, -9, 9, 11};
-const int rookOffSats[4] = { -10, -1, 1, 10 };
+const int bishopOffSets[4] = { -11, -9, 9, 11 };
+const int rookOffSets[4] = { -10, -1, 1, 10 };
 const int queenOffSets[8] = { -11, -10, -9, -1, 1, 9, 10, 11 };
 const int kingOffSets[8] = { -11, -10, -9, -1, 1, 9, 10, 11 };
 
@@ -96,6 +99,10 @@ extern int Sq64ToSq120[64];
 
 // FUNCTIONS
 
+// init.c
 extern void AllInit();
+
+// bitboards.c
+extern void PrintBitBoard(U64 bb);
 
 #endif // DEFS_H
