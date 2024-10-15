@@ -85,7 +85,11 @@ typedef struct {
 #define SQ64(sq120) Sq120ToSq64[sq120]
 #define SQ120(sq64) Sq64ToSq120[64]
 #define FileRankToSQ(f,r) (21 + (f)) + ((r) * 10)
-
+#define POP(b) PopBit(b)
+#define CountBits(b) CountBits(b)
+#define ClearBit(bb,sq) ((bb) &= ClearMask[(sq)])
+#define SetBit(bb,sq) ((bb) |= SetMask[(sq)])
+ 
 // offset 
 const int knightOffSets[8] = { -21, -19, -12, -8, 8, 12, 19, 21 };
 const int bishopOffSets[4] = { -11, -9, 9, 11 };
@@ -96,6 +100,8 @@ const int kingOffSets[8] = { -11, -10, -9, -1, 1, 9, 10, 11 };
 // GLOBALS
 extern int Sq120ToSq64[BRD_SQ_NUM];
 extern int Sq64ToSq120[64];
+extern U64 SetMask[64];
+extern U64 ClearMask[64];
 
 // FUNCTIONS
 
@@ -104,5 +110,7 @@ extern void AllInit();
 
 // bitboards.c
 extern void PrintBitBoard(U64 bb);
+extern int PopBit(U64* bb);
+extern int CountBits(U64 b);
 
 #endif // DEFS_H
