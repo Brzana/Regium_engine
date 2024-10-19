@@ -25,7 +25,7 @@ enum {
 	A5 = 61, B5, C5, D5, E5, F5, G5, H5,
 	A6 = 71, B6, C6, D6, E6, F6, G6, H6,
 	A7 = 81, B7, C7, D7, E7, F7, G7, H7,
-	A8 = 91, B8, C8, D8, E8, F8, G8, H8, NO_SQ
+	A8 = 91, B8, C8, D8, E8, F8, G8, H8, NO_SQ, OFFBOARD
 };
 
 enum { FALSE, TRUE };
@@ -82,8 +82,8 @@ typedef struct {
 } S_MOVE;
 
 // MACROS
-#define SQ64(sq120) Sq120ToSq64[sq120]
-#define SQ120(sq64) Sq64ToSq120[64]
+#define SQ64(sq120) (Sq120ToSq64[(sq120)])
+#define SQ120(sq64) (Sq64ToSq120[(64)])
 #define FileRankToSQ(f,r) (21 + (f)) + ((r) * 10)
 #define POP(b) PopBit(b)
 #define CountBits(b) CountBits(b)
@@ -108,12 +108,18 @@ extern U64 CastleKeys[16];
 
 // FUNCTIONS
 
-// init.c
+// init.cpp
 extern void AllInit();
 
-// bitboards.c
+// bitboards.cpp
 extern void PrintBitBoard(U64 bb);
 extern int PopBit(U64* bb);
 extern int CountBits(U64 b);
 
-#endif // DEFS_H
+// haskeys.cpp
+extern U64 GeneratePosKey(const S_BOARD* pos);
+
+// board.cpp
+extern void ResetBoard(S_BOARD* pos);
+
+#endif 
