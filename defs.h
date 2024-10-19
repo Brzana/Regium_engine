@@ -45,7 +45,7 @@ typedef struct {
 // board structure
 typedef struct {
 
-	int piecies[BRD_SQ_NUM];
+	int pieces[BRD_SQ_NUM];
 	U64 pawns[3];
 
 	int KingSq[2];
@@ -102,6 +102,9 @@ extern int Sq120ToSq64[BRD_SQ_NUM];
 extern int Sq64ToSq120[64];
 extern U64 SetMask[64];
 extern U64 ClearMask[64];
+extern U64 PieceKeys[13][120];
+extern U64 SideKey;
+extern U64 CastleKeys[16];
 
 // FUNCTIONS
 

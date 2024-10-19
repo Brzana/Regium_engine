@@ -1,7 +1,8 @@
-#include "stdio.h"
+#include <stdio.h>
 #include "defs.h"
+#include <stdlib.h>
 
-// those functions are used for pawns
+
 
 const int BitTable[64] = {
 	63, 30, 3, 32, 25, 41, 22, 33, 15, 50, 42, 13, 11, 53, 19, 34, 61, 29, 2,
@@ -18,6 +19,7 @@ int PopBit(U64* bb) {
 	return BitTable[(fold * 0x783a9b23) >> 26]; // returning index in BitTable
 }
 
+// this function counts bits
 int CountBits(U64 b) {
 	int r;
 	for (r = 0; b; r++, b &= b - 1); // incrementing r when we find a bit that's 1, then changing it to 0
