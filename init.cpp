@@ -2,10 +2,10 @@
 #include <stdlib.h>
 
 // macro for generating unique bitboard
-#define RAND_64 (	(U64) rand() + \
-					(U64) rand() << 15 + \
-				    (U64) rand() << 30 + \
-					(U64) rand() << 45 + \
+#define RAND_64 (	(U64) rand() | \
+					(U64) rand() << 15 | \
+				    (U64) rand() << 30 | \
+					(U64) rand() << 45 | \
 					((U64) rand() & 0xf) << 60		)
 
 

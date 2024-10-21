@@ -1,4 +1,5 @@
 #include "defs.h"
+#include <stdio.h>
 
 // hashing means we xor the bit board to generate the unique position key, which is stored in U64 posKey
 
@@ -12,7 +13,9 @@ U64 GeneratePosKey(const S_BOARD* pos) {
 	for (sq = 0; sq < BRD_SQ_NUM; ++sq) {
 		piece = pos->pieces[sq];
 		if (piece != NO_SQ && piece != EMPTY) {
-			finalKey ^= PieceKeys[piece][sq];
+			if (piece >= wP && piece <= bK) {
+				finalKey ^= PieceKeys[piece][sq]; // I was debugging for 2h bcs im stupid and didnt skip through out of bounds sqs :)
+			}
 		}
 	}
 

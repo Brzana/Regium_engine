@@ -3,55 +3,26 @@
 #include <time.h>
 #include "defs.h"
 
+#define FEN1 "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"
+#define FEN2 "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2"
+#define FEN3 "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"
+
 int main()
 {   
     AllInit();
-    srand(time(0));
+    
+    S_BOARD board[1];
+    ParseFen((char*)FenStartingPosition, board);
+    PrintBoard(board);
 
-    int PieceOne = rand();
-    int PieceTwo = rand();
-    int PieceThree = rand();
-    int PieceFour = rand();
+    ParseFen((char*)FEN1, board);
+    PrintBoard(board);
 
-    printf("PieceOne:%X\n", PieceOne);
-    printf("PieceTwo:%X\n", PieceTwo);
-    printf("PieceThree:%X\n", PieceThree);
-    printf("PieceFour:%X\n", PieceFour);
+    ParseFen((char*)FEN2, board);
+    PrintBoard(board);
 
-    int Key = PieceOne ^ PieceTwo ^ PieceThree ^ PieceFour;
-    int TempKey = PieceOne;
-    TempKey ^= PieceThree;
-    TempKey ^= PieceFour;
-    TempKey ^= PieceTwo;
-
-    printf("Key: %X\n", Key);
-    printf("TempKey: %X\n", TempKey);
-
-    int i;
-    U64 playBitBoard = 0ULL;
-
-    printf("Start: \n\n");
-    PrintBitBoard(playBitBoard);
-
-    playBitBoard |= (1ULL << SQ64(D2));
-    printf("\n\nD2 Added: \n\n");
-    PrintBitBoard(playBitBoard);
-
-    playBitBoard |= (1ULL << SQ64(E2));
-    printf("\n\nE2 Added: \n\n");
-    PrintBitBoard(playBitBoard);
-
-    int count = CountBits(playBitBoard);
-
-    printf("\nCount: %i\n", count);
-
-    int index = POP(&playBitBoard);
-
-    printf("Index 1: %i\n", index);
-
-    index = POP(&playBitBoard);
-
-    printf("Index 2: %i", index);
+    ParseFen((char*)FEN3, board);
+    PrintBoard(board);
 
     return 0;
 }

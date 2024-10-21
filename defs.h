@@ -8,6 +8,7 @@ typedef unsigned long long U64;
 #define NAME "REGIUM_ENGINE"
 #define BRD_SQ_NUM 120
 #define MAXGAMEMOVES 2048
+#define FenStartingPosition "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };
 
@@ -83,7 +84,7 @@ typedef struct {
 
 // MACROS
 #define SQ64(sq120) (Sq120ToSq64[(sq120)])
-#define SQ120(sq64) (Sq64ToSq120[(64)])
+#define SQ120(sq64) (Sq64ToSq120[(sq64)])
 #define FileRankToSQ(f,r) (21 + (f)) + ((r) * 10)
 #define POP(b) PopBit(b)
 #define CountBits(b) CountBits(b)
@@ -105,6 +106,10 @@ extern U64 ClearMask[64];
 extern U64 PieceKeys[13][120];
 extern U64 SideKey;
 extern U64 CastleKeys[16];
+extern char PceChar[];
+extern char SideChar[];
+extern char RankChar[];
+extern char FileChar[];
 
 // FUNCTIONS
 
@@ -112,14 +117,16 @@ extern U64 CastleKeys[16];
 extern void AllInit();
 
 // bitboards.cpp
-extern void PrintBitBoard(U64 bb);
-extern int PopBit(U64* bb);
-extern int CountBits(U64 b);
+extern void PrintBitBoard (U64 bb);
+extern int PopBit (U64* bb);
+extern int CountBits (U64 b);
 
 // haskeys.cpp
-extern U64 GeneratePosKey(const S_BOARD* pos);
+extern U64 GeneratePosKey (const S_BOARD* pos);
 
 // board.cpp
-extern void ResetBoard(S_BOARD* pos);
+extern int ParseFen (char* fen, S_BOARD* pos);
+extern void ResetBoard (S_BOARD* pos);
+extern void PrintBoard(const S_BOARD* pos);
 
 #endif 
