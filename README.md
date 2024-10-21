@@ -1,1 +1,1 @@
-# silnikszachowy
+# Chess engine for college project
