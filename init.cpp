@@ -1,5 +1,6 @@
 #include "defs.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 // macro for generating unique bitboard
 #define RAND_64 (	(U64) rand() | \
@@ -18,6 +19,30 @@ U64 ClearMask[64];
 U64 PieceKeys[13][120];
 U64 SideKey;
 U64 CastleKeys[16];
+
+int FilesBoard[BRD_SQ_NUM];
+int RanksBoard[BRD_SQ_NUM];
+
+void InitFilesRanksBoard() {
+	int i = 0;
+	int file = FILE_A;
+	int rank = RANK_1;
+	int sq = A1;
+	int sq64 = 0;
+
+	for (i = 0; i < BRD_SQ_NUM; ++i) {
+		FilesBoard[i] = OFFBOARD;
+		RanksBoard[i] = OFFBOARD;
+	}
+
+	for (rank = RANK_1; rank <= RANK_8; ++rank) {
+		for (file = FILE_A; file <= FILE_H; ++file) {
+			sq = FileRankToSQ(file, rank);
+			FilesBoard[sq] = file;
+			RanksBoard[sq] = rank;
+		}
+	}
+}
 
 void InitHashKeys() {
 
@@ -82,4 +107,5 @@ void AllInit() {
 	InitSq120To64();
 	InitBitMasks();
 	InitHashKeys();
+	InitFilesRanksBoard();
 }
