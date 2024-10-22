@@ -3,6 +3,11 @@
 
 int ParseFen(char* fen, S_BOARD* pos) {
 
+	if (*fen == NULL) {
+		printf("FEN didn't load correctly");
+		return 1;
+	}
+
 	int rank = RANK_8;
 	int file = FILE_A;
 	int piece = EMPTY;
@@ -72,6 +77,11 @@ int ParseFen(char* fen, S_BOARD* pos) {
 		}
 
 		fen++;  // Move to the next character in the FEN string.
+	}
+
+	if (*fen != 'w' && *fen != 'b') {
+		printf("FEN didn't load correctly.");
+		return -1;
 	}
 
 	pos->side = (*fen == 'w') ? WHITE : BLACK;
