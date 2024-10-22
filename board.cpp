@@ -4,8 +4,12 @@
 int ParseFen(char* fen, S_BOARD* pos) {
 
 	if (*fen == NULL) {
-		printf("FEN didn't load correctly");
+		printf("FEN error (StringIsNULL)\n");
 		return 1;
+	}
+
+	if (pos == NULL) {
+		printf("Board Structure error (BoardIsNULL)\n");
 	}
 
 	int rank = RANK_8;
@@ -63,7 +67,7 @@ int ParseFen(char* fen, S_BOARD* pos) {
 		// Loop over the number of squares to place the piece or advance.
 		for (i = 0; i < count; i++) {
 			if (file > FILE_H) {  // Ensure we don't overrun the file limits.
-				printf("FEN error: file overflow\n");
+				printf("FEN error (file overflow)\n");
 				return -1;
 			}
 			sq64 = rank * 8 + file;  // Convert rank/file to square index.
@@ -79,8 +83,9 @@ int ParseFen(char* fen, S_BOARD* pos) {
 		fen++;  // Move to the next character in the FEN string.
 	}
 
+	// checking for errors
 	if (*fen != 'w' && *fen != 'b') {
-		printf("FEN didn't load correctly.");
+		printf("FEN error (side)\n");
 		return -1;
 	}
 
@@ -89,6 +94,12 @@ int ParseFen(char* fen, S_BOARD* pos) {
 
 	// castling perms
 	for (int i = 0; i < 4; i++) {
+		
+		if (*fen != ' ' && *fen != 'K' && *fen != 'Q' && *fen != 'k' && *fen != 'q') {
+			printf("Fen error (castling perms)");
+			return - 1;
+		}
+		
 		if (*fen == ' ') {
 			break;
 		}
@@ -105,7 +116,7 @@ int ParseFen(char* fen, S_BOARD* pos) {
 
 	// checking if castle perm is in bounds
 	if (!(pos->castlePerm >= 0 && pos->castlePerm <= 15)) {
-		printf("Castle Perm error");
+		printf("Castle Perm error ()outOfBounds");
 		return -1;
 	}
 
