@@ -2,6 +2,143 @@
 #include "defs.h"
 
 
+int CheckBoard(const S_BOARD* pos) {
+
+	// mirroring for error handling
+	int t_pceNum[13] = { 0,0,0,0,0,0,0,0,0,0,0,0,0 };
+	int t_bigPce[2] = { 0,0 };
+	int t_majPce[2] = { 0,0 };
+	int t_minPce[2] = { 0,0 };
+	int t_material[2] = { 0,0 };
+
+	int sq64, t_piece, t_pce_num, sq120, colour, pcount;
+
+	U64 t_pawns[3] = { 0ULL,0ULL,0ULL };
+
+	t_pawns[WHITE] = pos->pawns[WHITE];
+	t_pawns[BLACK] = pos->pawns[BLACK];
+	t_pawns[BOTH] = pos->pawns[BOTH];
+
+	for (t_piece = wP; t_piece <= bK; ++t_piece) {
+		for (t_pce_num = 0; t_pce_num < pos->pceNum[t_piece]; ++t_pce_num) {
+			sq120 = pos->pList[t_piece][t_pce_num];
+			if (!(pos->pieces[sq120] == t_piece)) {
+				printf("Position error. (pieces list)");
+				return -1;
+			}
+		}
+	}
+
+	// check piece count and other counters
+	for (sq64 = 0; sq64 < 64; ++sq64) {
+		sq120 = SQ120(sq64);
+		t_piece = pos->pieces[sq120];
+		t_pceNum[t_piece]++;
+		colour = PieceCol[t_piece];
+		if (PieceBig[t_piece] == TRUE) t_bigPce[colour]++;
+		if (PieceMin[t_piece] == TRUE) t_minPce[colour]++;
+		if (PieceMaj[t_piece] == TRUE) t_majPce[colour]++;
+
+		t_material[colour] += PieceVal[t_piece];
+	}
+
+	for (t_piece = wP; t_piece <= bK; ++t_piece) {
+		if (!(t_pceNum[t_piece] == pos->pceNum[t_piece])) {
+			printf("Position error. (Number of pieces)");
+			return -1;
+		}
+	}
+
+	// check bitboards count
+	pcount = CountBits(t_pawns[WHITE]);
+	if (!(pcount == pos->pceNum[wP])) {
+		printf("Position error. (Number of pawns)");
+		return -1;
+	}
+	pcount = CountBits(t_pawns[BLACK]);
+	if (!(pcount == pos->pceNum[bP])) {
+		printf("Position error. (Number of pawns)");
+		return -1;
+	}
+	pcount = CountBits(t_pawns[BOTH]);
+	if (!(pcount == pos->pceNum[wP] + pos->pceNum[bP])) {
+		printf("Position error. (Number of pawns)");
+		return -1;
+	}
+
+	// check bitboards squares
+	while (t_pawns[WHITE]) {
+		sq64 = PopBit(&t_pawns[WHITE]);
+		if (!(pos->pieces[SQ120(sq64)] == wP)) {
+			printf("Position error. (Pawns squares)");
+			return -1;
+		}
+	}
+
+	while (t_pawns[BLACK]) {
+		sq64 = PopBit(&t_pawns[BLACK]);
+		if (!(pos->pieces[SQ120(sq64)] == bP)) {
+			printf("Position error. (Pawns squares)");
+			return -1;
+		}
+	}
+
+	while (t_pawns[BOTH]) {
+		sq64 = PopBit(&t_pawns[BOTH]);
+		if (!(pos->pieces[SQ120(sq64)] == wP || pos->pieces[SQ120(sq64)])) {
+			printf("Position error. (Pawns squares)");
+			return -1;
+		}
+	}
+
+	if (!(t_material[WHITE] == pos->material[WHITE] && t_material[BLACK] == pos->material[BLACK])) {
+		printf("Position error. (Material)");
+		return -1;
+	}
+
+	if (!(t_minPce[WHITE] == pos->minPce[WHITE] && t_minPce[BLACK] == pos->minPce[BLACK])) {
+		printf("Position error. (Minor pieces)");
+		return -1;
+	}
+
+	if (!(t_majPce[WHITE] == pos->majPce[WHITE] && t_majPce[BLACK] == pos->majPce[BLACK])) {
+		printf("Position error. (Major pieces)");
+		return -1;
+	}
+
+	if (!(t_bigPce[WHITE] == pos->bigPce[WHITE] && t_bigPce[BLACK] == pos->bigPce[BLACK])) {
+		printf("Position error. (Big pieces)");
+		return -1;
+	}
+
+	if (!(pos->side == WHITE || pos->side == BLACK)) {
+		printf("Position error. (Side)");
+		return -1;
+	}
+
+	if (!(GeneratePosKey(pos) == pos->posKey)) {
+		printf("Position error. (Position Key)");
+		return -1;
+	}
+
+	if (!(pos->enPas == NO_SQ || (RanksBoard[pos->enPas] == RANK_6 && pos->side == WHITE) || RanksBoard[pos->enPas] == RANK_3 && pos->side == BLACK)) {
+		printf("Position error. (En passant)");
+		return -1;
+	}
+
+	if (!(pos->pieces[pos->KingSq[WHITE]] == wK)) {
+		printf("Position error. (King square)");
+		return -1;
+	}
+
+	if (!(pos->pieces[pos->KingSq[BLACK]] == bK)) {
+		printf("Position error. (King square)");
+		return -1;
+	}
+
+	return TRUE;
+}
+
 void UpdateListsMaterial(S_BOARD* pos) {
 	int piece, sq, i, colour;
 
@@ -26,6 +163,15 @@ void UpdateListsMaterial(S_BOARD* pos) {
 
 			if (piece == wK) pos->KingSq[WHITE] = sq;
 			if (piece == bK) pos->KingSq[BLACK] = sq; // kind of redundant, ill deal with these later
+
+			if (piece == wP) {
+				SetBit(pos->pawns[WHITE], SQ64(sq));
+				SetBit(pos->pawns[BOTH], SQ64(sq));
+			}
+			else if (piece == bP) {
+				SetBit(pos->pawns[BLACK], SQ64(sq));
+				SetBit(pos->pawns[BOTH], SQ64(sq));
+			}
 		}
 	}
 }
@@ -158,6 +304,8 @@ int ParseFen(char* fen, S_BOARD* pos) {
 	}
 
 	pos->posKey = GeneratePosKey(pos);
+
+	UpdateListsMaterial(pos);
 
 	return 0;
 }
