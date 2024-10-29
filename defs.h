@@ -34,14 +34,10 @@ enum { FALSE, TRUE };
 // WKCA - white king side castling, WQCA - white queen side castling, B - black
 enum { WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8 };
 
-// struct for undo (move this before S_BOARD)
 typedef struct {
 	int move;
-	int castlePerm;
-	int enPas;
-	int fiftyMove;
-	U64 posKey;
-} S_UNDO;
+	int score; // move order
+} S_MOVE ;
 
 // board structure
 typedef struct {
@@ -66,21 +62,34 @@ typedef struct {
 	int majPce[2];
 	int minPce[2];
 	int material[2];
-	S_UNDO history[MAXGAMEMOVES]; // move history
 
 	// piece list
 	int pList[13][10];
 
 } S_BOARD;
 
-// moves generation struct
-typedef struct {
-	unsigned int from;
-	unsigned int to;
-	unsigned int captured;
-	unsigned int flag;
+// Game Move
+/*
+0000 0000 0000 0000 0000 0111 1111 -> from 0x7F
+0000 0000 0000 0011 1111 1000 0000 -> to >> 7 0x7F
+0000 0000 0011 1100 0000 0000 0000 -> captured >> 14 0xF
+0000 0000 0100 0000 0000 0000 0000 -> en passant 0x40000
+0000 0000 1000 0000 0000 0000 0000 -> pawn start 0x80000
+0000 1111 0000 0000 0000 0000 0000 -> pawn promotion >> 20 0xF
+0001 0000 0000 0000 0000 0000 0000 -> castling move 0x1000000
+better way od storing information instead of creating int for every single value
+*/
 
-} S_MOVE;
+#define FROMSQ(move) ((move) & 0x7F)
+#define TOSQ(move) (((move)>> 7) & 0x7F)
+#define CAPTURED(move) (((move >> 14) & 0xF)
+#define MFLAGP(move) ((move) & 0x40000)
+#define MFLAGPS(move) ((move) & 0x80000)
+#define PROMOTED(move) (((move >> 20) & 0xF)
+#define MFLAGCA(move) ((move) & 0x1000000)
+#define MFLAGCAP(move) 0x7c000
+#define MFLAGPROM 0xF00000
+
 
 // MACROS
 #define SQ64(sq120) (Sq120ToSq64[(sq120)])
