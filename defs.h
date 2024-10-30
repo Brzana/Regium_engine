@@ -85,7 +85,7 @@ better way od storing information instead of creating int for every single value
 #define CAPTURED(move) (((move >> 14) & 0xF)
 #define MFLAGP(move) ((move) & 0x40000)
 #define MFLAGPS(move) ((move) & 0x80000)
-#define PROMOTED(move) (((move >> 20) & 0xF)
+#define PROMOTED(move) ((move >> 20) & 0xF)
 #define MFLAGCA(move) ((move) & 0x1000000)
 #define MFLAGCAP(move) 0x7c000
 #define MFLAGPROM 0xF00000
@@ -155,5 +155,9 @@ extern int CheckBoard(const S_BOARD* pos);
 
 // attacked.cpp
 extern int SqAttacked(const int sq, const int side, const S_BOARD* pos);
+
+//io.cpp
+extern char* PrSq(const int sq);
+extern char* PrMove(const int move);
 
 #endif 
