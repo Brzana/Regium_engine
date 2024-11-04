@@ -1,4 +1,5 @@
 #include "defs.h"
+#include <stdio.h>
 
 // offset 
 const int knightOffSets[8] = { -21, -19, -12, -8, 8, 12, 19, 21 };

@@ -134,7 +134,9 @@
     <ClCompile Include="hashkeys.cpp" />
     <ClCompile Include="init.cpp" />
     <ClCompile Include="io.cpp" />
+    <ClCompile Include="movegen.cpp" />
     <ClCompile Include="regium_engine.cpp" />
+    <ClCompile Include="validate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="defs.h" />

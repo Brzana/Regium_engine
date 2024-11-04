@@ -1,5 +1,23 @@
 #pragma once
 
+#include <stdio.h>
+
+#define DEBUG
+
+#ifndef DEBUG
+#define ASSERT(n)
+#else
+#define ASSERT(n) \
+        if (!(n)) { \
+            printf("%s - Failed ", #n); \
+            printf("On %s ", __DATE__); \
+            printf("At %s ", __TIME__); \
+            printf("In File %s ", __FILE__); \
+            printf("At Line %d\n", __LINE__); \
+        }
+#endif
+
+
 #ifndef DEFS_H
 #define DEFS_H
 
@@ -8,6 +26,7 @@ typedef unsigned long long U64;
 #define NAME "REGIUM_ENGINE"
 #define BRD_SQ_NUM 120
 #define MAXGAMEMOVES 2048
+#define MAXPOSITIONMOVES 256
 #define FenStartingPosition "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };
@@ -39,6 +58,19 @@ typedef struct {
 	int score; // move order
 } S_MOVE ;
 
+typedef struct {
+	S_MOVE moves[MAXPOSITIONMOVES];
+	int count;
+} S_MOVELIST;
+
+typedef struct {
+	int move;
+	int castlePerm;
+	int enPas;
+	int fiftyMove;
+	U64 poskey;
+} S_UNDO;
+
 // board structure
 typedef struct {
 
@@ -66,6 +98,8 @@ typedef struct {
 	// piece list
 	int pList[13][10];
 
+	S_UNDO history[MAXGAMEMOVES];
+
 } S_BOARD;
 
 // Game Move
@@ -80,15 +114,18 @@ typedef struct {
 better way od storing information instead of creating int for every single value
 */
 
-#define FROMSQ(move) ((move) & 0x7F)
-#define TOSQ(move) (((move)>> 7) & 0x7F)
-#define CAPTURED(move) (((move >> 14) & 0xF)
-#define MFLAGP(move) ((move) & 0x40000)
-#define MFLAGPS(move) ((move) & 0x80000)
-#define PROMOTED(move) ((move >> 20) & 0xF)
-#define MFLAGCA(move) ((move) & 0x1000000)
-#define MFLAGCAP(move) 0x7c000
-#define MFLAGPROM 0xF00000
+#define FROMSQ(m)       ((m) & 0x3F)
+#define TOSQ(m)         (((m) >> 7) & 0x3F)
+#define CAPTURED(m)     (((m) >> 14) & 0xF)
+#define PROMOTED(m)     (((m) >> 20) & 0xF)
+
+#define MFLAGEP         0x40000
+#define MFLAGPS         0x80000
+#define MFLAGCA         0x100000
+
+#define MFLAGCAP        0x7C000
+#define MFLAGPROM       0xF00000
+
 
 
 // MACROS
@@ -159,5 +196,16 @@ extern int SqAttacked(const int sq, const int side, const S_BOARD* pos);
 //io.cpp
 extern char* PrSq(const int sq);
 extern char* PrMove(const int move);
+void PrintMoveList(const S_MOVELIST* list);
+
+// validate.cpp
+extern int SqOnBoard(const int sq);
+extern int SideValid(const int side);
+extern int FileRankValid(const int fr);
+extern int PieceValidEmpty(const int pce);
+extern int PieceValid(const int pce);
+
+// movegen.cpp
+extern void GenerateAllMoves(const S_BOARD* pos, S_MOVELIST* list);
 
 #endif 
